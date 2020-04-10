@@ -64538,7 +64538,7 @@ var SubscribPage = /*#__PURE__*/function (_Component) {
         xs: 4
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: function onClick(e) {
-          return _this2.clickHandler(e, 'http://127.0.0.1:8000/api/plans/gold-plan/payment');
+          return _this2.clickHandler(e, '/invest-calc/api/plans/gold-plan/payment');
         },
         href: "/payement"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
@@ -64548,7 +64548,7 @@ var SubscribPage = /*#__PURE__*/function (_Component) {
         xs: 4
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: function onClick(e) {
-          return _this2.clickHandler(e, 'http://127.0.0.1:8000/api/plans/diamond-plan/payment');
+          return _this2.clickHandler(e, '/invest-calc/api/plans/diamond-plan/payment');
         },
         href: "/payement"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
@@ -64559,7 +64559,7 @@ var SubscribPage = /*#__PURE__*/function (_Component) {
         xs: 4
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         onClick: function onClick(e) {
-          return _this2.clickHandler(e, 'http://127.0.0.1:8000/api/plans/silver-plan/payment');
+          return _this2.clickHandler(e, '/invest-calc/api/plans/silver-plan/payment');
         },
         href: "/payement"
       }, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
@@ -64818,7 +64818,7 @@ var auth = function auth(authData, isSignup) {
       console.log("Guest Signup");
       console.log(authData);
       var form = new FormData(authData);
-      fetch('http://127.0.0.1:8000/api/guest/login', {
+      fetch('/invest-calc/api/guest/login', {
         method: 'POST',
         mode: 'cors',
         body: form
@@ -64909,7 +64909,7 @@ var getCalculate = function getCalculate() {
   return function (dispatch) {
     dispatch(getCalculateStart());
     var token = localStorage.getItem('token');
-    var link = "//127.0.0.1:8000/api/calculate";
+    var link = "/invest-calc/api/calculate";
     fetch(link, {
       method: 'GET',
       headers: {
@@ -64946,7 +64946,7 @@ var makeCalculation = function makeCalculation(data) {
     dispatch(makeCalculationStart());
     var token = localStorage.getItem('token');
     var form = new FormData(data);
-    var link = "//127.0.0.1:8000/api/calculate";
+    var link = "/invest-calc/api/calculate";
     fetch(link, {
       method: 'POST',
       mode: 'cors',
@@ -65027,7 +65027,7 @@ var setPayementPage = function setPayementPage(page) {
 };
 var getPayementPage = function getPayementPage() {
   return function (dispatch) {
-    fetch('http://127.0.0.1:8000/api/plans/silver-plan/payment').then(function (response) {
+    fetch('/invest-calc/api/plans/silver-plan/payment').then(function (response) {
       response.text();
     }).then(function (html) {
       console.log(html);

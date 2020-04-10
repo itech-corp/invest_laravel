@@ -12,7 +12,7 @@ export const setPayementPage = (page)=> {
 export const getPayementPage =() => dispatch=> {
 
     
-    fetch('http://127.0.0.1:8000/api/plans/silver-plan/payment').then(response=>{
+    fetch('/invest-calc/api/plans/silver-plan/payment').then(response=>{
         response.text();
     }).then(html=>{
         console.log(html);

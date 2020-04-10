@@ -54,7 +54,7 @@ export const auth = (authData, isSignup) => dispatch => {
         console.log("Guest Signup");
         console.log(authData)
         const form = new FormData(authData);
-        fetch('http://127.0.0.1:8000/api/guest/login', {
+        fetch('/invest-calc/api/guest/login', {
             method: 'POST',
             mode: 'cors',
             body: form,
