@@ -1,15 +1,39 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes React and other helpers. It's a great starting point while
- * building robust, powerful web applications using React + Laravel.
- */
+import React, { Component } from 'react';
+import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-require('./bootstrap');
+import Layout from './containers/Layout';
+import * as actions from './store/actions/index';
 
-/**
- * Next, we will create a fresh React component instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+import './App.css';
 
-require('./index');
+class App extends Component {
+  componentDidMount() {
+    this.props.onTryAutoSignup();
+  }
+
+  render() {
+    return (
+      <div className="App">
+
+        <Layout />
+
+      </div>
+    );
+  }
+
+}
+
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token !== null
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState())
+  };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

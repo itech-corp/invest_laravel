@@ -12,7 +12,7 @@ export const setPayementPage = (page)=> {
 export const getPayementPage =() => dispatch=> {
 
     
-    fetch('invest-calc/api/plans/silver-plan/payment').then(response=>{
+    fetch('http://127.0.0.1:8000/api/plans/silver-plan/payment').then(response=>{
         response.text();
     }).then(html=>{
         console.log(html);
@@ -29,8 +29,9 @@ export const setPaymentLink = (link,price)  =>{
     }
  
 }
-export const getPaymentLink = (link,method) => dispatch=> {
-    const token = localStorage.getItem('token');
+export const getPaymentLink = (link,token) => dispatch=> {
+    const token2 = localStorage.getItem('token');
+    console.log("token is " +token2)
     let PaymentLink='';
     let price=0;
     fetch(link, {
@@ -38,7 +39,7 @@ export const getPaymentLink = (link,method) => dispatch=> {
         headers:{
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': token
+            'Authorization':token2
         }
         
         

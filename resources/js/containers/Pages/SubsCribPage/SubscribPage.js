@@ -16,7 +16,7 @@ class SubscribPage extends Component {
 
     clickHandler = (e, link) => {
         e.preventDefault();
-        this.props.getPaymentLink(link);
+        this.props.getPaymentLink(link,this.props.token);
         this.props.history.push('/payement');
     }
 
@@ -73,13 +73,13 @@ class SubscribPage extends Component {
                         <Col xs={9}>
                             <Row >
                                 <Col className="plan-1" xs={4}>
-                                    <a onClick={e=>this.clickHandler(e, 'invest-calc/api/plans/gold-plan/payment')} href="/payement" ><img alt="plan" src={plan_1} /></a>
+                                    <a onClick={e=>this.clickHandler(e, 'http://127.0.0.1:8000/api/plans/gold-plan/payment')} href="/payement" ><img alt="plan" src={plan_1} /></a>
                                 </Col>
                                 <Col xs={4}>
-                                    <a onClick={e=>this.clickHandler(e, 'invest-calc/api/plans/diamond-plan/payment')}  href="/payement"><img alt="plan" src={plan_2} /></a>
+                                    <a onClick={e=>this.clickHandler(e, 'http://127.0.0.1:8000/api/plans/diamond-plan/payment')}  href="/payement"><img alt="plan" src={plan_2} /></a>
                                 </Col>
                                 <Col className="mt-5" xs={4}>
-                                    <a onClick={e=>this.clickHandler(e, 'invest-calc/api/plans/silver-plan/payment')} href="/payement"> <img alt="plan" src={plan_3} /></a>
+                                    <a onClick={e=>this.clickHandler(e, 'http://127.0.0.1:8000/api/plans/silver-plan/payment')} href="/payement"> <img alt="plan" src={plan_3} /></a>
                                 </Col>
                             </Row>
                         </Col>
@@ -99,7 +99,7 @@ class SubscribPage extends Component {
 
 const mapStateToProps = state => {
     return{
-       
+       token:state.auth.token,
     }
 };
 

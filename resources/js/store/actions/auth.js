@@ -33,11 +33,14 @@ export const logOut = () => {
 export const checkAuthTimeout = (expirationTime) => {
     return dispatch => {
         setTimeout(() => {
-            dispatch(logOut());
+           // dispatch(logOut());
         }, expirationTime * 1000);
     };
 };
 
+export const getToken = () => {
+    
+}
 
 export const auth = (authData, isSignup) => dispatch => {
     dispatch(authStart());
@@ -51,7 +54,7 @@ export const auth = (authData, isSignup) => dispatch => {
         console.log("Guest Signup");
         console.log(authData)
         const form = new FormData(authData);
-        fetch('invest-calc/api/guest/login', {
+        fetch('http://127.0.0.1:8000/api/guest/login', {
             method: 'POST',
             mode: 'cors',
             body: form,

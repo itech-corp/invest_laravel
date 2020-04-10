@@ -97,12 +97,19 @@ class PlansController extends Controller
         $floatingPackPeriod = (52 / $period) - $packPeriod;
 
         $balance = 0;
+        $balances = [];
         $ownedPacks = [[$pack]];
-        $leftPacks = [['pack' => $pack, 'leftWeeks' => 52]];
+        $leftPacks = [[['pack' => $pack, 'leftWeeks' => 52]]];
+        $leftPacksPerWeek = [];
 
         function rpa(Pack $pack, $period)
         {
             return $pack->amount * $pack->rate * $period / 52;
+        }
+
+        function payout(Pack $pack)
+        {
+            return $pack->amount * $pack->rate / 52;
         }
 
         function littleRound($number)
@@ -112,15 +119,23 @@ class PlansController extends Controller
 
         for ($currentPeriod = 0; $currentPeriod <= $totalPeriods; $currentPeriod++) {
             $leftPeriodPacks = [];
+            $balances[] = $balance;
+
             foreach ($ownedPacks as $ownedPacksPeriod => $ownedPeriodPacks) {
                 if ($currentPeriod - $ownedPacksPeriod < $packPeriod) {
                     foreach ($ownedPeriodPacks as $ownedPack) {
-                        $leftPeriodPacks[] = ['pack' => $ownedPack, 'leftWeeks' => 52 - ($currentPeriod - $ownedPacksPeriod + 1) * $period];
+                        $leftWeeks = 52 - ($currentPeriod - $ownedPacksPeriod + 1) * $period;
+                        if ($leftWeeks > 0) {
+                            $leftPeriodPacks[] = ['pack' => $ownedPack, 'leftWeeks' => $leftWeeks];
+                        }
                         $balance += rpa($ownedPack, $period);
                     }
                 } else if ($currentPeriod - $ownedPacksPeriod === $packPeriod + 1 && $floatingPackPeriod > 0)
                     foreach ($ownedPeriodPacks as $ownedPack) {
-                        $leftPeriodPacks[] = ['pack' => $ownedPack, 'leftWeeks' => round($floatingPackPeriod * $period)];
+                        $leftWeeks = round($floatingPackPeriod * $period);
+                        if ($leftWeeks > 0) {
+                            $leftPeriodPacks[] = ['pack' => $ownedPack, 'leftWeeks' => $leftWeeks];
+                        }
                         $balance += $floatingPackPeriod * rpa($ownedPack, $period);
                     }
             }
@@ -129,14 +144,54 @@ class PlansController extends Controller
             if ($totalPeriods - $currentPeriod > $packPeriod) {
                 $selectedPacks = [];
                 while ($balance >= 100) {
-                    $selectedPack = $plan->packs()->where('amount', '<=', $balance)->latest()->first();
+                    $selectedPack = $plan->packs()->where('amount', '<=', $balance)->orderBy('amount', 'desc')->first();
                     $leftPeriodPacks[] = ['pack' => $ownedPack, 'leftWeeks' => 52];
                     $selectedPacks[] = $selectedPack;
                     $balance -= $selectedPack->amount;
                 }
                 $ownedPacks[] = $selectedPacks;
             }
-            $leftPacks[] = $leftPeriodPacks;
+            if (count($leftPeriodPacks) > 0) $leftPacks[] = $leftPeriodPacks;
+        }
+
+        foreach ($leftPacks as $currentPeriod => $leftPeriodPacks) {
+            $balanceBeforePeriod = $balances[$currentPeriod];
+
+            $nextPeriod = $currentPeriod + 1;
+            $invest = 0;
+            if (count($ownedPacks) > $nextPeriod) {
+                $invest = 0;
+
+                foreach ($ownedPacks[$nextPeriod] as $currentPack) {
+                    $invest += $currentPack->amount;
+                }
+            }
+
+            for ($index = 0; $index < $period; $index++) {
+                $finalInvest = $index === $period - 1 ? +$invest : 0;
+
+                $packs = [];
+                $payoutsAmount = 0;
+                $payouts = [];
+
+                foreach ($leftPeriodPacks as $element) {
+                    $currentPack = $element['pack'];
+                    $leftWeeks = $element['leftWeeks'];
+
+                    $packs[] = ['pack' => $currentPack, 'leftWeeks' => $leftWeeks - $index];
+                    $payoutsAmount += ($index + 1) * payout($currentPack);
+                    $payouts[] = payout($currentPack);
+                }
+                $currentBalance = littleRound($balanceBeforePeriod + $payoutsAmount) - $finalInvest;
+
+                $leftPacksPerWeek[] = [
+                    'week' => $currentPeriod * $period + $index + 1, 
+                    'packs' => $packs, 
+                    'balance' => $currentBalance, 
+                    'payouts' => $payouts, 
+                    'invest' => $finalInvest
+                ];
+            }
         }
 
         return response()->json([
@@ -147,6 +202,7 @@ class PlansController extends Controller
             'points' => $points - 1,
             'duration' => $duration,
             'leftPacks' => $leftPacks,
+            'leftPacksPerWeek' => $leftPacksPerWeek,
             'ownedPacks' => $ownedPacks,
         ]);
     }

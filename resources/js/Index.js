@@ -5,18 +5,20 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 
-import App from './Application';
+import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import authReducer from './store/reducers/auth';
 import payementReducer from './store/reducers/payement';
+import calculationReducer from './store/reducers/calculation';
 
 import './index.css';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
     auth: authReducer,
-    payement:payementReducer
+    payement:payementReducer,
+    calculation:calculationReducer
 })
 
 const store = createStore(rootReducer, composeEnhancers(
@@ -32,7 +34,7 @@ const app = (
 )
 
 
-ReactDOM.render(app, document.getElementById('app'));
+ReactDOM.render(app, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
